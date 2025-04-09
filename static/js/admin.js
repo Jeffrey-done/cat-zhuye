@@ -3,7 +3,7 @@
  */
 
 // API地址 - 部署到Cloudflare Worker后替换
-const API_URL = 'https://your-worker-name.your-account.workers.dev';
+const API_URL = 'https://cat-zhuye.jeffreyy.workers.dev';
 // 测试模式 - 部署后设为false
 const TEST_MODE = false;
 
