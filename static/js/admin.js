@@ -11,6 +11,16 @@ const TEST_MODE = false;
 const TEST_USERNAME = 'admin';
 const TEST_PASSWORD = 'password123';
 
+// 可用主题列表
+const AVAILABLE_THEMES = [
+  { id: 'default', name: '默认主题', color: '#ffb173' },
+  { id: 'pastel', name: '柔和粉彩主题', color: '#f2a6c2' },
+  { id: 'ocean', name: '海洋风格主题', color: '#40b9e6' },
+  { id: 'forest', name: '森林绿风格主题', color: '#5cad7c' },
+  { id: 'night', name: '暗夜风格主题', color: '#7c5ae6' },
+  { id: 'cute', name: '可爱卡通风格主题', color: '#ff82b2' }
+];
+
 // 保存的数据
 let siteData = {
   profile: {
@@ -30,7 +40,8 @@ let siteData = {
   ],
   settings: {
     siteTitle: '猫咪风格个人主页',
-    siteDescription: '一个超可爱的猫咪风格个人导航页面，带有精美的动画效果和响应式设计。'
+    siteDescription: '一个超可爱的猫咪风格个人导航页面，带有精美的动画效果和响应式设计。',
+    theme: 'default' // 默认主题
   }
 };
 
@@ -63,6 +74,7 @@ const siteDescription = document.getElementById('site-description');
 document.addEventListener('DOMContentLoaded', () => {
   checkAuth();
   initEventListeners();
+  initThemeSelector();
 });
 
 // 初始化事件监听器
@@ -105,6 +117,93 @@ function initEventListeners() {
     e.preventDefault();
     saveSettings();
   });
+}
+
+// 初始化主题选择器
+function initThemeSelector() {
+  const themeSelectContainer = document.getElementById('theme-select-container');
+  if (!themeSelectContainer) return;
+  
+  // 清空容器
+  themeSelectContainer.innerHTML = '';
+  
+  // 创建主题预览卡片
+  AVAILABLE_THEMES.forEach(theme => {
+    const themeCard = document.createElement('div');
+    themeCard.className = 'theme-card';
+    themeCard.setAttribute('data-theme', theme.id);
+    
+    // 设置当前主题指示器
+    if (siteData.settings && siteData.settings.theme === theme.id) {
+      themeCard.classList.add('active');
+    }
+    
+    // 创建主题预览样式
+    const previewStyle = document.createElement('div');
+    previewStyle.className = 'theme-preview';
+    previewStyle.style.backgroundColor = theme.color;
+    
+    // 创建主题信息
+    const themeInfo = document.createElement('div');
+    themeInfo.className = 'theme-info';
+    themeInfo.innerHTML = `
+      <h5>${theme.name}</h5>
+      <small>${theme.id === 'default' ? '默认主题' : ''}</small>
+    `;
+    
+    // 添加点击事件
+    themeCard.addEventListener('click', () => {
+      // 移除所有活动状态
+      document.querySelectorAll('.theme-card').forEach(card => {
+        card.classList.remove('active');
+      });
+      
+      // 添加活动状态到当前卡片
+      themeCard.classList.add('active');
+      
+      // 更新主题设置
+      if (!siteData.settings) {
+        siteData.settings = {};
+      }
+      siteData.settings.theme = theme.id;
+      
+      // 更新隐藏字段值
+      document.getElementById('site-theme').value = theme.id;
+      
+      // 应用主题预览
+      previewTheme(theme.id);
+    });
+    
+    // 组装主题卡片
+    themeCard.appendChild(previewStyle);
+    themeCard.appendChild(themeInfo);
+    themeSelectContainer.appendChild(themeCard);
+  });
+}
+
+// 预览主题
+function previewTheme(themeId) {
+  // 移除当前主题样式
+  const currentThemeLink = document.getElementById('preview-theme-link');
+  if (currentThemeLink) {
+    currentThemeLink.remove();
+  }
+  
+  // 如果不是默认主题，添加新主题样式
+  if (themeId !== 'default') {
+    const themeLink = document.createElement('link');
+    themeLink.id = 'preview-theme-link';
+    themeLink.rel = 'stylesheet';
+    themeLink.href = `../themes/${themeId}-theme.css`;
+    document.head.appendChild(themeLink);
+  }
+  
+  // 更新预览文本
+  const previewText = document.getElementById('theme-preview-text');
+  if (previewText) {
+    const themeName = AVAILABLE_THEMES.find(t => t.id === themeId)?.name || '默认主题';
+    previewText.textContent = `当前选择: ${themeName}`;
+  }
 }
 
 // 检查用户身份验证
@@ -252,6 +351,21 @@ function populateFormFields(data) {
   // 网站设置
   siteTitle.value = data.settings?.siteTitle || '';
   siteDescription.value = data.settings?.siteDescription || '';
+  
+  // 主题设置
+  if (data.settings && data.settings.theme) {
+    document.getElementById('site-theme').value = data.settings.theme;
+    // 高亮选中的主题
+    const themeCard = document.querySelector(`.theme-card[data-theme="${data.settings.theme}"]`);
+    if (themeCard) {
+      document.querySelectorAll('.theme-card').forEach(card => {
+        card.classList.remove('active');
+      });
+      themeCard.classList.add('active');
+    }
+    // 预览主题
+    previewTheme(data.settings.theme);
+  }
 }
 
 // 渲染社交链接
@@ -442,6 +556,7 @@ function saveSettings() {
   
   siteData.settings.siteTitle = siteTitle.value;
   siteData.settings.siteDescription = siteDescription.value;
+  siteData.settings.theme = document.getElementById('site-theme').value || 'default';
   
   saveData();
   alert('网站设置已保存');
