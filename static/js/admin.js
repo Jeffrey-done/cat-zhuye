@@ -199,7 +199,7 @@ function previewTheme(themeId) {
     const themeLink = document.createElement('link');
     themeLink.id = 'preview-theme-link';
     themeLink.rel = 'stylesheet';
-    themeLink.href = `themes/${themeId}-theme.css`;
+    themeLink.href = `static/themes/${themeId}-theme.css`;
     document.head.appendChild(themeLink);
   }
   
@@ -210,7 +210,7 @@ function previewTheme(themeId) {
     previewText.textContent = `当前选择: ${themeName}`;
   }
   
-  console.log('预览主题:', themeId);
+  console.log('预览主题:', themeId, '路径:', themeId !== 'default' ? `static/themes/${themeId}-theme.css` : '默认主题');
 }
 
 // 检查用户身份验证

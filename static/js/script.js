@@ -496,12 +496,12 @@ function applyCssTheme(themeId) {
     const themeLink = document.createElement('link');
     themeLink.id = 'site-theme-link';
     themeLink.rel = 'stylesheet';
-    themeLink.href = `themes/${themeId}-theme.css`;
+    themeLink.href = `static/themes/${themeId}-theme.css`;
     
     // 添加到文档头部
     document.head.appendChild(themeLink);
     
-    console.log(`主题已应用: ${themeId}`);
+    console.log(`主题已应用: ${themeId}, 路径: ${themeLink.href}`);
   } catch (error) {
     console.error('应用主题失败:', error);
   }
