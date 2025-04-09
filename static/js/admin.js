@@ -5,7 +5,7 @@
 // API地址 - 部署到Cloudflare Worker后替换
 const API_URL = 'https://cat-zhuye.jeffreyy.workers.dev';
 // 测试模式 - 部署后设为false
-const TEST_MODE = false;
+const TEST_MODE = true;
 
 // 测试用户名和密码 (仅在测试模式下使用)
 const TEST_USERNAME = 'admin';
