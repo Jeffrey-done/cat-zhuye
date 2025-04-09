@@ -1,0 +1,664 @@
+/* 
+ * 猫咪风格个人主页 - 主样式表
+ * 作者: AI助手
+ */
+
+/* 导入字体 */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+
+/* 变量定义 - 浅色模式 */
+:root {
+  --bg-primary: #fffaf2;
+  --bg-secondary: #fff5e6;
+  --text-primary: #333333;
+  --text-secondary: #666666;
+  --accent-primary: #ff9e7d;  /* 猫咪橙 */
+  --accent-secondary: #ffd5bc;
+  --card-bg: rgba(255, 255, 255, 0.85);
+  --card-shadow: 0 4px 20px rgba(253, 197, 158, 0.15);
+  --nav-bg: rgba(255, 255, 255, 0.9);
+  --paw-color: #ffbb94;
+  --cat-primary: #ffb173;
+  --cat-secondary: #ffe0c2;
+  --transition-speed: 0.3s;
+}
+
+/* 变量定义 - 深色模式 */
+[data-theme="dark"] {
+  --bg-primary: #2d2b38;
+  --bg-secondary: #252334;
+  --text-primary: #f0f0f0;
+  --text-secondary: #c0c0c0;
+  --accent-primary: #ff9e7d;  /* 保持猫咪橙 */
+  --accent-secondary: #bc8571;
+  --card-bg: rgba(47, 45, 60, 0.85);
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  --nav-bg: rgba(39, 38, 54, 0.9);
+  --paw-color: #ffbb94;
+  --cat-primary: #ffb173;
+  --cat-secondary: #db9461;
+}
+
+/* 基础样式重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Noto Sans SC', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  overflow-x: hidden;
+  background-image: url('../img/paw-pattern.svg');
+  background-size: 200px;
+  background-attachment: fixed;
+  transition: background-color var(--transition-speed) ease, color var(--transition-speed) ease;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+ul {
+  list-style: none;
+}
+
+/* 加载动画 */
+.loader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  transition: opacity 0.5s ease;
+}
+
+.cat-loader {
+  width: 80px;
+  height: 80px;
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.cat-loader .cat-head {
+  width: 50px;
+  height: 40px;
+  background: var(--cat-primary);
+  border-radius: 50% 50% 35% 35%;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: cat-head 1.5s infinite;
+}
+
+.cat-loader .cat-body {
+  width: 60px;
+  height: 30px;
+  background: var(--cat-primary);
+  border-radius: 50% 50% 50% 50% / 70% 70% 40% 40%;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.cat-loader .paw {
+  width: 15px;
+  height: 10px;
+  background: var(--cat-secondary);
+  border-radius: 50%;
+  position: absolute;
+  bottom: 0;
+}
+
+.cat-loader .paw-left {
+  left: 10px;
+  animation: paw-left 0.8s infinite;
+}
+
+.cat-loader .paw-right {
+  right: 10px;
+  animation: paw-right 0.8s infinite;
+}
+
+@keyframes cat-head {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-5px); }
+}
+
+@keyframes paw-left {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes paw-right {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+  25%, 75% { transform: translateY(-4px); }
+}
+
+.loader p {
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* 头部导航栏 */
+header {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: var(--nav-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: background var(--transition-speed) ease;
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 5%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--accent-primary);
+}
+
+.logo img {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.theme-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-primary);
+  font-size: 1.5rem;
+}
+
+/* 主要内容区 */
+.main-container {
+  max-width: 1200px;
+  margin: 120px auto 50px;
+  padding: 0 20px;
+}
+
+/* 个人信息区 */
+.profile-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 2rem;
+  margin-bottom: 3rem;
+  border-radius: 20px;
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  position: relative;
+  overflow: hidden;
+  transition: background var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+}
+
+.profile-img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid var(--accent-secondary);
+  margin-bottom: 1.5rem;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.profile-img:hover {
+  transform: scale(1.05);
+  border-color: var(--accent-primary);
+}
+
+.profile-name {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--accent-primary);
+}
+
+.profile-bio {
+  font-size: 1.1rem;
+  max-width: 500px;
+  margin: 0 auto 1.5rem;
+  color: var(--text-secondary);
+}
+
+.social-links {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.social-link {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-secondary);
+  color: var(--bg-primary);
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.social-link:hover {
+  background: var(--accent-primary);
+  transform: translateY(-3px);
+}
+
+/* 猫爪背景图案 */
+.paw-print {
+  position: absolute;
+  opacity: 0.1;
+  z-index: -1;
+}
+
+.paw-1 {
+  top: 10%;
+  left: 10%;
+  transform: rotate(20deg);
+  width: 60px;
+}
+
+.paw-2 {
+  bottom: 15%;
+  right: 10%;
+  transform: rotate(-15deg);
+  width: 45px;
+}
+
+/* 项目区域 - 简化卡片样式 */
+.projects-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.project-card {
+  border-radius: 20px;
+  padding: 1.5rem;
+  background: var(--card-bg);
+  box-shadow: var(--card-shadow);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.project-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: var(--accent-primary);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-7px);
+  box-shadow: 0 15px 30px rgba(253, 197, 158, 0.2);
+}
+
+.project-card:hover::before {
+  transform: scaleX(1);
+}
+
+.project-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--accent-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  font-size: 1.8rem;
+  color: var(--bg-primary);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.project-card:hover .project-icon {
+  transform: scale(1.1) rotate(5deg);
+  background: var(--accent-primary);
+}
+
+.project-title {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+  transition: color 0.3s ease;
+}
+
+.project-card:hover .project-title {
+  color: var(--accent-primary);
+}
+
+/* 波纹点击效果 */
+.ripple {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  animation: ripple 0.6s linear;
+  background-color: rgba(255, 158, 125, 0.3);
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* 猫咪脚印装饰 */
+.project-card:nth-child(odd)::after {
+  content: '';
+  position: absolute;
+  bottom: 10px;
+  right: 15px;
+  width: 25px;
+  height: 25px;
+  background-image: url('../img/paw-pattern.svg');
+  background-size: contain;
+  opacity: 0.1;
+  transform: rotate(45deg);
+}
+
+.project-card:nth-child(even)::after {
+  content: '';
+  position: absolute;
+  bottom: 10px;
+  left: 15px;
+  width: 25px;
+  height: 25px;
+  background-image: url('../img/paw-pattern.svg');
+  background-size: contain;
+  opacity: 0.1;
+  transform: rotate(-45deg);
+}
+
+/* 猫咪动画元素 */
+.cat-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 80px;
+  height: 80px;
+  z-index: 900;
+  cursor: pointer;
+}
+
+.cat {
+  width: 80px;
+  height: 80px;
+  position: relative;
+}
+
+.cat-head {
+  position: absolute;
+  top: 0;
+  width: 60px;
+  height: 50px;
+  background: var(--cat-primary);
+  border-radius: 50% 50% 35% 35%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.cat-ear {
+  position: absolute;
+  width: 25px;
+  height: 25px;
+  background: var(--cat-primary);
+  top: -10px;
+  border-radius: 50% 50% 0 0;
+}
+
+.cat-ear-left {
+  left: -2px;
+  transform: rotate(-15deg);
+}
+
+.cat-ear-right {
+  right: -2px;
+  transform: rotate(15deg);
+}
+
+.cat-ear-inner {
+  position: absolute;
+  width: 15px;
+  height: 15px;
+  background: var(--cat-secondary);
+  border-radius: 50% 50% 0 0;
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.cat-face {
+  position: absolute;
+  width: 45px;
+  height: 35px;
+  background: var(--cat-secondary);
+  border-radius: 45% 45% 60% 60%;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.cat-eye {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: var(--text-primary);
+  border-radius: 50%;
+  top: 22px;
+}
+
+.cat-eye-left {
+  left: 13px;
+}
+
+.cat-eye-right {
+  right: 13px;
+}
+
+.cat-nose {
+  position: absolute;
+  width: 8px;
+  height: 4px;
+  background: #ff8a73;
+  border-radius: 50%;
+  top: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.cat-mouth {
+  position: absolute;
+  width: 12px;
+  height: 6px;
+  border-bottom: 2px solid #ff8a73;
+  border-radius: 0 0 50% 50%;
+  top: 36px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.cat-tail {
+  position: absolute;
+  width: 12px;
+  height: 55px;
+  background: var(--cat-primary);
+  bottom: -25px;
+  right: 10px;
+  border-radius: 0 0 20px 20px;
+  transform-origin: top center;
+  animation: tail-wag 3s infinite ease-in-out;
+}
+
+/* 猫咪点击动画 */
+.cat-animate .cat-head {
+  animation: cat-nod 0.5s;
+}
+
+@keyframes cat-nod {
+  0%, 100% { transform: translateX(-50%) rotate(0); }
+  50% { transform: translateX(-50%) rotate(10deg); }
+}
+
+@keyframes tail-wag {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(15deg); }
+  50% { transform: rotate(-15deg); }
+  75% { transform: rotate(10deg); }
+}
+
+/* 猫爪动画效果 */
+.paw-effect {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 9999;
+}
+
+/* 页脚 */
+footer {
+  text-align: center;
+  padding: 2rem 0;
+  margin-top: 3rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.heart {
+  color: #ff6b6b;
+  display: inline-block;
+  animation: heartbeat 1.5s infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+  .profile-img {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .profile-name {
+    font-size: 1.8rem;
+  }
+  
+  .projects-section {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .project-card {
+    padding: 1.2rem;
+  }
+  
+  .project-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.5rem;
+  }
+  
+  .project-title {
+    font-size: 1.1rem;
+  }
+  
+  .cat-container {
+    bottom: 10px;
+    right: 10px;
+    width: 60px;
+    height: 60px;
+  }
+  
+  .cat {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .projects-section {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* 在暗模式下猫咪的眼睛变化 */
+[data-theme="dark"] .cat-eye {
+  background: #ffcc4d;
+  box-shadow: 0 0 5px #ffcc4d;
+}
+
+/* 全局过渡效果 */
+.fade-transition {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+} 

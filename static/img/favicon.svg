@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <g transform="translate(10, 10) scale(0.8)">
+    <!-- 猫咪头部（简化版） -->
+    <circle cx="50" cy="50" r="40" fill="#FFB173" />
+    
+    <!-- 猫咪脸部 -->
+    <circle cx="50" cy="55" r="30" fill="#FFE0C2" />
+    
+    <!-- 猫咪耳朵 -->
+    <path d="M25,25 L35,40 L15,40 Z" fill="#FFB173" />
+    <path d="M75,25 L85,40 L65,40 Z" fill="#FFB173" />
+    
+    <!-- 猫咪眼睛（简化） -->
+    <ellipse cx="35" cy="50" rx="4" ry="7" fill="#333" />
+    <ellipse cx="65" cy="50" rx="4" ry="7" fill="#333" />
+    
+    <!-- 猫咪鼻子 -->
+    <path d="M50,60 L45,65 L55,65 Z" fill="#FF8A73" />
+  </g>
+</svg> 

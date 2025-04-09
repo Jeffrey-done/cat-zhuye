@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>猫咪主页 - 后台管理</title>
+  <meta name="robots" content="noindex, nofollow">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <!-- 网站图标 -->
+  <link rel="icon" href="static/img/favicon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      --primary-color: #ff9e7d;
+      --primary-light: #ffd5bc;
+      --primary-dark: #ff8a66;
+      --accent-color: #fb6d6c;
+      --dark-color: #333333;
+      --light-color: #fffaf2;
+      --neutral-color: #f8f9fa;
+      --text-color: #4a4a4a;
+      --border-radius: 16px;
+      --box-shadow: 0 6px 16px rgba(253, 197, 158, 0.15);
+      --transition: all 0.3s ease;
+    }
+    
+    body {
+      background-color: var(--light-color);
+      color: var(--text-color);
+      font-family: 'Noto Sans SC', sans-serif;
+      min-height: 100vh;
+      transition: var(--transition);
+      background-image: url('static/img/paw-pattern.svg');
+      background-size: 200px;
+      background-attachment: fixed;
+      background-blend-mode: overlay;
+    }
+    
+    .admin-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+    
+    .login-container {
+      max-width: 400px;
+      margin: 120px auto;
+      padding: 2.5rem;
+      border-radius: var(--border-radius);
+      background-color: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .login-container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+      z-index: 1;
+    }
+    
+    .btn-primary {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      color: white;
+      border-radius: 50px;
+      padding: 0.6rem 1.5rem;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      border-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 158, 125, 0.4);
+    }
+    
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+    
+    .btn-outline-primary {
+      color: var(--primary-color);
+      border-color: var(--primary-color);
+      border-radius: 50px;
+      transition: var(--transition);
+    }
+    
+    .btn-outline-primary:hover {
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
+      transform: translateY(-2px);
+    }
+    
+    .admin-header {
+      border-radius: var(--border-radius);
+      margin-bottom: 2rem;
+      padding: 1.5rem 2rem;
+      background-color: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      box-shadow: var(--box-shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 1rem;
+      z-index: 100;
+      transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .card {
+      border-radius: var(--border-radius);
+      margin-bottom: 1.5rem;
+      border: none;
+      box-shadow: var(--box-shadow);
+      background-color: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: var(--transition);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .card-body {
+      padding: 1.8rem;
+    }
+    
+    .form-control,
+    .input-group-text {
+      border-radius: 8px;
+      border-color: #e0e0e0;
+      padding: 0.6rem 1rem;
+      transition: var(--transition);
+    }
+    
+    .form-control:focus {
+      box-shadow: 0 0 0 0.25rem rgba(255, 158, 125, 0.25);
+      border-color: var(--primary-color);
+    }
+    
+    .nav-tabs {
+      border-bottom: none;
+      margin-bottom: 1.5rem;
+      background-color: rgba(255, 255, 255, 0.7);
+      border-radius: 100px;
+      padding: 0.4rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .nav-tabs .nav-link {
+      border: none;
+      border-radius: 100px;
+      padding: 0.6rem 1.5rem;
+      margin: 0 0.2rem;
+      color: var(--text-color);
+      transition: var(--transition);
+    }
+    
+    .nav-tabs .nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .nav-tabs .nav-link.active {
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: 500;
+      box-shadow: 0 4px 12px rgba(255, 158, 125, 0.4);
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .logo-img {
+      width: 40px;
+      margin-right: 12px;
+    }
+    
+    .brand-text {
+      font-weight: 600;
+      font-size: 1.4rem;
+      color: var(--primary-color);
+      margin: 0;
+    }
+    
+    .list-group-item {
+      border: none;
+      background-color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 0.8rem;
+      border-radius: 12px;
+      transition: var(--transition);
+      overflow: hidden;
+    }
+    
+    .list-group-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .project-icon-preview {
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: var(--primary-color);
+      background-color: white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .social-link-item {
+      border-radius: 12px;
+      background-color: rgba(255, 255, 255, 0.5);
+      transition: var(--transition);
+    }
+    
+    .social-link-item:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* 猫爪背景装饰 */
+    .paw-decoration {
+      position: absolute;
+      opacity: 0.1;
+      z-index: -1;
+    }
+    
+    .paw-1 {
+      top: -40px;
+      right: -20px;
+      transform: rotate(45deg);
+      width: 100px;
+    }
+    
+    .paw-2 {
+      bottom: -30px;
+      left: -30px;
+      transform: rotate(-30deg);
+      width: 80px;
+    }
+    
+    /* 添加猫咪图案到登录框 */
+    .cat-ears {
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 30px;
+      z-index: 2;
+    }
+    
+    .cat-ear {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background-color: var(--primary-color);
+      border-radius: 50% 50% 0 0;
+    }
+    
+    .cat-ear-left {
+      left: 5px;
+      transform: rotate(-30deg);
+    }
+    
+    .cat-ear-right {
+      right: 5px;
+      transform: rotate(30deg);
+    }
+    
+    /* 进度指示器 */
+    .saving-indicator {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 10px 20px;
+      border-radius: 50px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    
+    .saving-indicator.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .spinner {
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* 响应式调整 */
+    @media (max-width: 768px) {
+      .admin-container {
+        padding: 1rem;
+      }
+      
+      .admin-header {
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        position: relative;
+        top: 0;
+      }
+      
+      .card-body {
+        padding: 1.2rem;
+      }
+      
+      .nav-tabs .nav-link {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 保存指示器 -->
+  <div id="saving-indicator" class="saving-indicator">
+    <div class="spinner"></div>
+    <span id="saving-message">正在保存...</span>
+  </div>
+
+  <!-- 登录界面 -->
+  <div id="login-page" class="login-container">
+    <!-- 猫耳装饰 -->
+    <div class="cat-ears">
+      <div class="cat-ear cat-ear-left"></div>
+      <div class="cat-ear cat-ear-right"></div>
+    </div>
+    
+    <!-- 猫爪背景装饰 -->
+    <img src="static/img/paw-pattern.svg" alt="" class="paw-decoration paw-1">
+    <img src="static/img/paw-pattern.svg" alt="" class="paw-decoration paw-2">
+    
+    <div class="text-center mb-4">
+      <img src="static/img/cat-logo.svg" alt="猫咪Logo" class="mb-3" style="width: 80px;">
+      <h2 class="brand-text mb-2">猫咪主页管理</h2>
+      <p class="text-muted">请登录以管理您的个人主页</p>
+    </div>
+    <form id="login-form">
+      <div class="mb-3">
+        <label for="username" class="form-label">用户名</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-person"></i></span>
+          <input type="text" class="form-control" id="username" required>
+        </div>
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">密码</label>
+        <div class="input-group">
+          <span class="input-group-text"><i class="bi bi-lock"></i></span>
+          <input type="password" class="form-control" id="password" required>
+        </div>
+      </div>
+      <div class="alert alert-danger hidden" id="login-error">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>用户名或密码错误
+      </div>
+      <button type="submit" class="btn btn-primary w-100 mt-4">
+        <i class="bi bi-box-arrow-in-right me-2"></i>登录
+      </button>
+    </form>
+  </div>
+
+  <!-- 管理界面 -->
+  <div id="admin-panel" class="admin-container hidden">
+    <div class="admin-header">
+      <div class="d-flex align-items-center">
+        <img src="static/img/cat-logo.svg" alt="猫咪Logo" class="logo-img">
+        <h2 class="brand-text">猫咪主页管理</h2>
+      </div>
+      <div class="d-flex align-items-center">
+        <button id="logout-btn" class="btn btn-outline-primary">
+          <i class="bi bi-box-arrow-right me-1"></i> 退出
+        </button>
+      </div>
+    </div>
+
+    <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab">
+          <i class="bi bi-person-circle me-1"></i> 个人信息
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="projects-tab" data-bs-toggle="tab" data-bs-target="#projects" type="button" role="tab">
+          <i class="bi bi-grid-1x2 me-1"></i> 项目管理
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings" type="button" role="tab">
+          <i class="bi bi-gear me-1"></i> 网站设置
+        </button>
+      </li>
+    </ul>
+
+    <div class="tab-content" id="adminTabContent">
+      <!-- 个人信息编辑 -->
+      <div class="tab-pane fade show active" id="profile" role="tabpanel">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title mb-3">
+              <i class="bi bi-person-vcard me-2 text-primary"></i>个人资料
+            </h4>
+            <form id="profile-form">
+              <div class="mb-3">
+                <label for="profile-name" class="form-label">名称</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-person"></i></span>
+                  <input type="text" class="form-control" id="profile-name">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="profile-bio" class="form-label">简介</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-chat-quote"></i></span>
+                  <textarea class="form-control" id="profile-bio" rows="3"></textarea>
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check2-circle me-1"></i> 保存个人信息
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="card mt-4">
+          <div class="card-body">
+            <h4 class="card-title mb-3">
+              <i class="bi bi-share me-2 text-primary"></i>社交链接
+            </h4>
+            <div id="social-links-container">
+              <!-- 社交链接将在这里动态生成 -->
+            </div>
+            <div class="d-flex mt-3">
+              <button id="add-social-link" class="btn btn-outline-primary me-2">
+                <i class="bi bi-plus-circle me-1"></i> 添加社交链接
+              </button>
+              <button id="save-social-links" class="btn btn-primary">
+                <i class="bi bi-check2-circle me-1"></i> 保存社交链接
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 项目管理 -->
+      <div class="tab-pane fade" id="projects" role="tabpanel">
+        <div class="card">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h4 class="card-title mb-0">
+                <i class="bi bi-folder2-open me-2 text-primary"></i>项目列表
+              </h4>
+              <button id="add-project" class="btn btn-outline-primary">
+                <i class="bi bi-plus-circle me-1"></i> 添加项目
+              </button>
+            </div>
+            <div id="projects-container" class="list-group mt-4">
+              <!-- 项目将在这里动态生成 -->
+            </div>
+            <div class="text-center text-muted small mt-3">
+              <i class="bi bi-info-circle me-1"></i>点击项目卡片进行编辑或删除
+            </div>
+          </div>
+        </div>
+
+        <div class="card mt-4 hidden" id="project-edit-card">
+          <div class="card-body">
+            <h4 class="card-title mb-3">
+              <i class="bi bi-pencil-square me-2 text-primary"></i>编辑项目
+            </h4>
+            <form id="project-form">
+              <input type="hidden" id="project-id">
+              <div class="mb-3">
+                <label for="project-title" class="form-label">项目名称</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                  <input type="text" class="form-control" id="project-title" required>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="project-icon" class="form-label">图标 (Bootstrap Icons)</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-image"></i></span>
+                  <input type="text" class="form-control" id="project-icon" placeholder="github">
+                </div>
+                <div class="form-text">
+                  <i class="bi bi-info-circle me-1"></i>输入Bootstrap Icons名称，例如：github, code, globe等
+                </div>
+                <div class="mt-2 d-flex align-items-center">
+                  <span class="me-2">预览: </span>
+                  <div class="project-icon-preview rounded-circle">
+                    <i id="icon-preview" class="bi bi-github"></i>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="project-link" class="form-label">链接地址</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-link-45deg"></i></span>
+                  <input type="url" class="form-control" id="project-link" placeholder="https://...">
+                </div>
+              </div>
+              <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">
+                  <i class="bi bi-check2-circle me-1"></i> 保存项目
+                </button>
+                <button type="button" id="cancel-project-edit" class="btn btn-outline-secondary">
+                  <i class="bi bi-x-circle me-1"></i> 取消
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- 网站设置 -->
+      <div class="tab-pane fade" id="settings" role="tabpanel">
+        <div class="card">
+          <div class="card-body">
+            <h4 class="card-title mb-3">
+              <i class="bi bi-sliders me-2 text-primary"></i>网站设置
+            </h4>
+            <form id="settings-form">
+              <div class="mb-3">
+                <label for="site-title" class="form-label">网站标题</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-type-h1"></i></span>
+                  <input type="text" class="form-control" id="site-title">
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="site-description" class="form-label">网站描述</label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+                  <textarea class="form-control" id="site-description" rows="2"></textarea>
+                </div>
+                <div class="form-text">
+                  <i class="bi bi-info-circle me-1"></i>网站描述将用于SEO和分享页面时的预览
+                </div>
+              </div>
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check2-circle me-1"></i> 保存设置
+              </button>
+            </form>
+          </div>
+        </div>
+        
+        <div class="card mt-4">
+          <div class="card-body">
+            <h4 class="card-title mb-3">
+              <i class="bi bi-shield-check me-2 text-primary"></i>系统信息
+            </h4>
+            <div class="table-responsive">
+              <table class="table table-borderless">
+                <tbody>
+                  <tr>
+                    <td width="30%"><strong>状态</strong></td>
+                    <td>
+                      <span class="badge bg-success">
+                        <i class="bi bi-check-circle me-1"></i>正常运行中
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>运行模式</strong></td>
+                    <td>
+                      <span id="mode-badge" class="badge bg-warning">
+                        <i class="bi bi-exclamation-triangle me-1"></i>测试模式
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><strong>版本</strong></td>
+                    <td>v1.0.0</td>
+                  </tr>
+                  <tr>
+                    <td><strong>最后更新</strong></td>
+                    <td id="last-updated">--</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- 管理脚本 -->
+  <script src="static/js/admin.js"></script>
+</body>
+</html> 

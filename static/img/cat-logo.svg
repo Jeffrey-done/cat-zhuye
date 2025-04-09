@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <g transform="translate(10, 10) scale(0.8)">
+    <!-- 猫咪头部 -->
+    <circle cx="50" cy="50" r="40" fill="#FFB173" />
+    
+    <!-- 猫咪脸部 -->
+    <circle cx="50" cy="55" r="30" fill="#FFE0C2" />
+    
+    <!-- 猫咪耳朵 -->
+    <path d="M25,25 L35,40 L15,40 Z" fill="#FFB173" />
+    <path d="M75,25 L85,40 L65,40 Z" fill="#FFB173" />
+    
+    <!-- 猫咪内耳 -->
+    <path d="M28,30 L35,38 L22,38 Z" fill="#FFCDA5" />
+    <path d="M72,30 L78,38 L65,38 Z" fill="#FFCDA5" />
+    
+    <!-- 猫咪眼睛 -->
+    <ellipse cx="35" cy="50" rx="5" ry="9" fill="#333" />
+    <ellipse cx="65" cy="50" rx="5" ry="9" fill="#333" />
+    
+    <!-- 反光点 -->
+    <circle cx="33" cy="46" r="2" fill="white" />
+    <circle cx="63" cy="46" r="2" fill="white" />
+    
+    <!-- 猫咪鼻子 -->
+    <path d="M50,60 L45,65 L55,65 Z" fill="#FF8A73" />
+    
+    <!-- 猫咪嘴巴 -->
+    <path d="M45,68 Q50,72 55,68" fill="none" stroke="#FF8A73" stroke-width="1.5" />
+    
+    <!-- 猫咪胡须 -->
+    <line x1="42" y1="65" x2="25" y2="60" stroke="#FFCDA5" stroke-width="1.5" />
+    <line x1="42" y1="67" x2="25" y2="67" stroke="#FFCDA5" stroke-width="1.5" />
+    <line x1="42" y1="69" x2="25" y2="74" stroke="#FFCDA5" stroke-width="1.5" />
+    
+    <line x1="58" y1="65" x2="75" y2="60" stroke="#FFCDA5" stroke-width="1.5" />
+    <line x1="58" y1="67" x2="75" y2="67" stroke="#FFCDA5" stroke-width="1.5" />
+    <line x1="58" y1="69" x2="75" y2="74" stroke="#FFCDA5" stroke-width="1.5" />
+  </g>
+</svg> 
