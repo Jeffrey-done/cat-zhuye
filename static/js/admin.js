@@ -3,9 +3,9 @@
  */
 
 // API地址 - 部署到Cloudflare Worker后替换
-const API_URL = 'https://your-worker.your-account.workers.dev';
+const API_URL = 'https://your-worker-name.your-account.workers.dev';
 // 测试模式 - 部署后设为false
-const TEST_MODE = true;
+const TEST_MODE = false;
 
 // 测试用户名和密码 (仅在测试模式下使用)
 const TEST_USERNAME = 'admin';
