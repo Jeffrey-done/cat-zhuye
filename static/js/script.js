@@ -47,13 +47,13 @@ function initTheme() {
   }
   
   // 应用主题
-  applyTheme(currentTheme);
+  applyColorMode(currentTheme);
   
   // 添加主题切换按钮点击事件
   themeToggle.addEventListener('click', function() {
     let newTheme = currentTheme === 'light' ? 'dark' : 'light';
     localStorage.setItem('theme', newTheme);
-    applyTheme(newTheme);
+    applyColorMode(newTheme);
     currentTheme = newTheme;
   });
   
@@ -61,13 +61,13 @@ function initTheme() {
   prefersDarkScheme.addEventListener('change', function(e) {
     const newTheme = e.matches ? 'dark' : 'light';
     localStorage.setItem('theme', newTheme);
-    applyTheme(newTheme);
+    applyColorMode(newTheme);
     currentTheme = newTheme;
   });
 }
 
-// 应用主题样式
-function applyTheme(theme) {
+// 应用明暗模式主题
+function applyColorMode(theme) {
   const themeIcon = document.getElementById('theme-icon');
   if (theme === 'dark') {
     document.documentElement.setAttribute('data-theme', 'dark');
@@ -309,7 +309,7 @@ async function loadData() {
     
     // 应用网站主题
     if (data.settings && data.settings.theme && data.settings.theme !== 'default') {
-      applyTheme(data.settings.theme);
+      applyCssTheme(data.settings.theme);
     }
     
     showLoader(false);
@@ -483,8 +483,8 @@ function createLoader() {
   return loader;
 }
 
-// 应用主题
-function applyTheme(themeId) {
+// 应用CSS主题
+function applyCssTheme(themeId) {
   if (!themeId || themeId === 'default') return;
   
   try {

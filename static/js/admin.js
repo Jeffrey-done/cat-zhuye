@@ -179,6 +179,11 @@ function initThemeSelector() {
     themeCard.appendChild(themeInfo);
     themeSelectContainer.appendChild(themeCard);
   });
+  
+  // 如果有当前选中的主题，显示预览
+  if (siteData.settings && siteData.settings.theme) {
+    previewTheme(siteData.settings.theme);
+  }
 }
 
 // 预览主题
@@ -194,7 +199,7 @@ function previewTheme(themeId) {
     const themeLink = document.createElement('link');
     themeLink.id = 'preview-theme-link';
     themeLink.rel = 'stylesheet';
-    themeLink.href = `../themes/${themeId}-theme.css`;
+    themeLink.href = `themes/${themeId}-theme.css`;
     document.head.appendChild(themeLink);
   }
   
@@ -204,6 +209,8 @@ function previewTheme(themeId) {
     const themeName = AVAILABLE_THEMES.find(t => t.id === themeId)?.name || '默认主题';
     previewText.textContent = `当前选择: ${themeName}`;
   }
+  
+  console.log('预览主题:', themeId);
 }
 
 // 检查用户身份验证
