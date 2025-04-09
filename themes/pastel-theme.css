@@ -1,0 +1,116 @@
+/* 
+ * 猫咪主页 - 柔和粉彩主题
+ * 这是一个以柔和粉彩色调为基础的清新主题
+ */
+
+:root {
+  --bg-color: #f8f6f9;
+  --card-bg: #ffffff;
+  --text-color: #5d5565;
+  --title-color: #9b7bb5;
+  --accent-color: #f2a6c2;
+  --hover-color: #b6cde7;
+  --shadow-color: rgba(155, 123, 181, 0.1);
+  --paw-color: rgba(242, 166, 194, 0.8);
+  --border-color: #e0d5e7;
+}
+
+[data-theme="dark"] {
+  --bg-color: #2d2a34;
+  --card-bg: #3e3a4a;
+  --text-color: #e0d5e7;
+  --title-color: #c6a9e1;
+  --accent-color: #f2a6c2;
+  --hover-color: #7c9bc0;
+  --shadow-color: rgba(0, 0, 0, 0.25);
+  --paw-color: rgba(242, 166, 194, 0.6);
+  --border-color: #4e4759;
+}
+
+/* 项目卡片样式 */
+.project-card {
+  background: var(--card-bg);
+  border-radius: 15px;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 6px 12px var(--shadow-color);
+  transition: all 0.3s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px var(--shadow-color);
+  border-color: var(--accent-color);
+}
+
+.project-icon {
+  color: var(--accent-color);
+  font-size: 2rem;
+  background: rgba(242, 166, 194, 0.1);
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+}
+
+/* 猫咪相关样式 */
+.cat-head {
+  background-color: #d4bbeb;
+}
+
+.cat-ear {
+  background-color: #d4bbeb;
+}
+
+.cat-ear-inner {
+  background-color: #f2a6c2;
+}
+
+.cat-face {
+  background-color: #e9ddf5;
+}
+
+.cat-nose {
+  background-color: #f2a6c2;
+}
+
+.cat-tail {
+  background-color: #d4bbeb;
+}
+
+/* 其他元素样式调整 */
+.profile-section {
+  background: var(--card-bg);
+  border-radius: 20px;
+  border: 2px solid var(--border-color);
+  box-shadow: 0 8px 16px var(--shadow-color);
+}
+
+.social-link {
+  background: var(--card-bg);
+  color: var(--accent-color);
+  border: 2px solid var(--border-color);
+}
+
+.social-link:hover {
+  background: var(--accent-color);
+  color: white;
+  transform: translateY(-3px);
+}
+
+/* 波纹效果色彩调整 */
+.ripple {
+  background-color: rgba(242, 166, 194, 0.4);
+}
+
+/* 加载器调整 */
+.loader .spinner {
+  border-top-color: var(--accent-color);
+}
+
+/* 页脚样式 */
+footer {
+  color: var(--text-color);
+}
+
+.heart {
+  color: #f2a6c2;
+} 

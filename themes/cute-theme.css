@@ -1,0 +1,259 @@
+/* 
+ * 猫咪主页 - 可爱卡通风格主题
+ * 这是一个以卡通和可爱元素为主的充满童趣的主题
+ */
+
+:root {
+  --bg-color: #ffeef8;
+  --card-bg: #ffffff;
+  --text-color: #6d5873;
+  --title-color: #ec609f;
+  --accent-color: #ff82b2;
+  --hover-color: #ffb7d8;
+  --shadow-color: rgba(255, 130, 178, 0.15);
+  --paw-color: rgba(255, 130, 178, 0.8);
+  --border-color: #ffd0e5;
+}
+
+[data-theme="dark"] {
+  --bg-color: #362940;
+  --card-bg: #473856;
+  --text-color: #f3d4e5;
+  --title-color: #ff93c1;
+  --accent-color: #ff82b2;
+  --hover-color: #ffb7d8;
+  --shadow-color: rgba(0, 0, 0, 0.25);
+  --paw-color: rgba(255, 130, 178, 0.6);
+  --border-color: #5e496f;
+}
+
+/* 页面背景 */
+body {
+  background-color: var(--bg-color);
+  background-image: 
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M30 20 Q35 10 40 20 Q45 30 50 20 Q55 10 60 20 Q65 30 70 20' stroke='%23ffb7d8' stroke-width='2' fill='none' opacity='0.3'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 20 Q35 10 45 25 Q55 40 45 55 Q30 55 15 55 Q5 40 15 25 Q25 10 30 20Z' fill='%23ff82b2' fill-opacity='0.05'/%3E%3C/svg%3E");
+}
+
+[data-theme="dark"] body {
+  background-image: 
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cpath d='M30 20 Q35 10 40 20 Q45 30 50 20 Q55 10 60 20 Q65 30 70 20' stroke='%23ff93c1' stroke-width='2' fill='none' opacity='0.2'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 20 Q35 10 45 25 Q55 40 45 55 Q30 55 15 55 Q5 40 15 25 Q25 10 30 20Z' fill='%23ff82b2' fill-opacity='0.05'/%3E%3C/svg%3E");
+}
+
+/* 卡通字体 */
+* {
+  font-family: "Comic Sans MS", "Comic Neue", cursive;
+}
+
+/* 项目卡片样式 */
+.project-card {
+  background: var(--card-bg);
+  border-radius: 20px;
+  border: 3px solid var(--border-color);
+  box-shadow: 8px 8px 0 var(--shadow-color);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  position: relative;
+  padding: 25px 20px;
+}
+
+.project-card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 12px 12px 0 var(--shadow-color);
+  border-color: var(--accent-color);
+}
+
+.project-icon {
+  color: var(--accent-color);
+  font-size: 2.3rem;
+  background: rgba(255, 183, 216, 0.2);
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  transition: all 0.3s ease;
+}
+
+.project-card:hover .project-icon {
+  transform: rotate(10deg) scale(1.1);
+  color: var(--title-color);
+}
+
+.project-title {
+  color: var(--title-color);
+  font-weight: bold;
+  margin-top: 15px;
+  font-size: 1.4rem;
+}
+
+/* 猫咪相关样式 */
+.cat-head {
+  background-color: #ffaece;
+}
+
+.cat-ear {
+  background-color: #ffaece;
+}
+
+.cat-ear-inner {
+  background-color: #fd80b1;
+}
+
+.cat-face {
+  background-color: #ffc9e3;
+}
+
+.cat-eye {
+  background-color: #6d5873;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+.cat-nose {
+  background-color: #fd80b1;
+}
+
+.cat-tail {
+  background-color: #ffaece;
+}
+
+/* 其他元素样式调整 */
+.profile-section {
+  background: var(--card-bg);
+  border-radius: 30px;
+  border: 3px solid var(--border-color);
+  box-shadow: 10px 10px 0 var(--shadow-color);
+  padding: 30px;
+  position: relative;
+}
+
+.profile-section::after {
+  content: '♥';
+  position: absolute;
+  top: -15px;
+  right: 20px;
+  background: var(--accent-color);
+  color: white;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 2px 2px 0 var(--shadow-color);
+}
+
+.profile-img {
+  border: 5px solid var(--accent-color);
+  border-radius: 50%;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px var(--shadow-color);
+}
+
+.profile-img:hover {
+  transform: scale(1.05) rotate(5deg);
+}
+
+.profile-name {
+  color: var(--title-color);
+  font-weight: bold;
+  font-size: 2rem;
+  margin-top: 15px;
+}
+
+.profile-bio {
+  color: var(--text-color);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.social-link {
+  background: var(--card-bg);
+  color: var(--accent-color);
+  border: 2px solid var(--border-color);
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  transition: all 0.3s ease;
+  font-size: 1.3rem;
+}
+
+.social-link:hover {
+  background: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+  transform: translateY(-5px) rotate(10deg);
+  box-shadow: 0 5px 10px var(--shadow-color);
+}
+
+/* 波纹效果 */
+.ripple {
+  background-color: rgba(255, 130, 178, 0.5);
+  border-radius: 50%;
+}
+
+/* 加载器调整 */
+.loader {
+  background-color: var(--bg-color);
+}
+
+.loader .spinner {
+  border: 5px solid rgba(255, 130, 178, 0.2);
+  border-top-color: var(--accent-color);
+  border-radius: 50%;
+}
+
+.loader p {
+  color: var(--accent-color);
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--card-bg);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-color);
+  border-radius: 10px;
+  border: 3px solid var(--card-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--hover-color);
+}
+
+/* 页脚样式 */
+footer {
+  color: var(--text-color);
+  margin-top: 40px;
+  font-size: 1.1rem;
+  text-align: center;
+  padding: 15px;
+  background-color: var(--card-bg);
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  border-top: 3px solid var(--border-color);
+  box-shadow: 0 -5px 15px var(--shadow-color);
+}
+
+.heart {
+  color: var(--accent-color);
+  display: inline-block;
+  animation: heartbeat 1.5s infinite;
+  font-size: 1.5rem;
+}
+
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.1); }
+  50% { transform: scale(1); }
+  75% { transform: scale(1.1); }
+} 
