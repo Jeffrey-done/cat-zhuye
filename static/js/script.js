@@ -3,8 +3,9 @@
  * 作者: AI助手
  */
 
-// Worker API地址
-const API_URL = 'https://cat-zhuye.jeffreyy.workers.dev';
+// API配置
+const API_URL = 'https://catpage-api.username.workers.dev'; // 部署后更改为您的Worker URL
+const API_TOKEN = 'temporary_token_for_frontend'; // 与Worker中设置的临时令牌相匹配
 
 // 等待DOM内容加载完成
 document.addEventListener('DOMContentLoaded', function() {
@@ -27,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initProjectCards();
   
   // 从后台加载网站数据
-  loadDataFromBackend();
+  loadData();
 });
 
 // 初始化主题设置
@@ -287,144 +288,191 @@ function loadRandomAvatar() {
   };
 }
 
-// 从Worker API加载数据
-function loadDataFromBackend() {
-  // 检查是否存在缓存数据以及缓存是否过期
-  const cachedData = localStorage.getItem('siteData');
-  const cacheTimestamp = localStorage.getItem('siteDataTimestamp');
-  const now = Date.now();
-  const cacheExpiration = 5 * 60 * 1000; // 5分钟缓存过期时间
-  
-  // 如果有缓存且未过期，使用缓存数据
-  if (cachedData && cacheTimestamp && (now - parseInt(cacheTimestamp)) < cacheExpiration) {
-    try {
-      const data = JSON.parse(cachedData);
-      updatePageContent(data);
-      console.log('使用缓存数据');
-      return;
-    } catch (e) {
-      console.error('解析缓存数据错误:', e);
-    }
-  }
-  
-  // 尝试从API获取数据
-  fetch(`${API_URL}/data`, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      // 尝试使用管理员的临时令牌获取数据
-      'Authorization': `Bearer ${localStorage.getItem('auth_token') || 'temporary_token_for_frontend'}` 
-    }
-  })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`API响应错误: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(data => {
-      // 更新页面内容
-      updatePageContent(data);
-      
-      // 缓存数据
-      localStorage.setItem('siteData', JSON.stringify(data));
-      localStorage.setItem('siteDataTimestamp', Date.now().toString());
-      
-      console.log('从API加载数据成功');
-    })
-    .catch(error => {
-      console.error('从API加载数据失败:', error);
-      
-      // 如果有缓存数据（即使已过期），在API失败时仍使用它
-      if (cachedData) {
-        try {
-          const data = JSON.parse(cachedData);
-          updatePageContent(data);
-          console.log('API请求失败，使用过期缓存数据');
-        } catch (e) {
-          console.error('解析缓存数据错误:', e);
-        }
+// 从API加载数据
+async function loadData() {
+  try {
+    showLoader(true);
+    const response = await fetch(`${API_URL}/data`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${API_TOKEN}`
       }
     });
+
+    if (!response.ok) {
+      throw new Error(`API响应错误: ${response.status}`);
+    }
+
+    const data = await response.json();
+    updatePageWithData(data);
+    showLoader(false);
+  } catch (error) {
+    console.error('加载数据失败:', error);
+    showLoader(false);
+    // 如果API加载失败，显示默认数据
+    updatePageWithDefaultData();
+  }
 }
 
-// 更新页面内容
-function updatePageContent(data) {
-  // 更新个人信息
-  if (data.profile) {
-    // 更新名称
-    const nameEl = document.querySelector('.profile-name');
-    if (nameEl && data.profile.name) {
-      nameEl.textContent = data.profile.name;
-    }
-    
-    // 更新简介
-    const bioEl = document.querySelector('.profile-bio');
-    if (bioEl && data.profile.bio) {
-      bioEl.textContent = data.profile.bio;
-    }
-    
-    // 更新社交链接
-    if (data.profile.socialLinks && data.profile.socialLinks.length > 0) {
-      const socialLinksContainer = document.querySelector('.social-links');
-      if (socialLinksContainer) {
-        // 清空现有链接
+// 使用数据更新页面
+function updatePageWithData(data) {
+  try {
+    // 更新个人信息
+    if (data.profile) {
+      document.querySelector('.profile-name').textContent = data.profile.name || '猫咪主人';
+      document.querySelector('.profile-bio').textContent = data.profile.bio || '喵喵喵！这是一个充满猫咪元素的个人主页。';
+      
+      // 更新社交链接
+      if (data.profile.socialLinks && data.profile.socialLinks.length > 0) {
+        const socialLinksContainer = document.querySelector('.social-links');
         socialLinksContainer.innerHTML = '';
         
-        // 添加新链接
         data.profile.socialLinks.forEach(link => {
-          const linkEl = document.createElement('a');
-          linkEl.href = link.url || '#';
-          linkEl.className = 'social-link';
-          linkEl.title = link.platform || '';
-          linkEl.innerHTML = `<i class="bi bi-${link.icon || 'link'}"></i>`;
-          socialLinksContainer.appendChild(linkEl);
+          const a = document.createElement('a');
+          a.href = link.url;
+          a.className = 'social-link';
+          a.title = link.platform;
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          
+          const icon = document.createElement('i');
+          icon.className = `bi bi-${link.icon}`;
+          a.appendChild(icon);
+          
+          socialLinksContainer.appendChild(a);
         });
       }
     }
-  }
-  
-  // 更新项目卡片
-  if (data.projects && data.projects.length > 0) {
-    const projectsSection = document.querySelector('.projects-section');
-    if (projectsSection) {
-      // 清空现有项目
+    
+    // 更新项目
+    if (data.projects && data.projects.length > 0) {
+      const projectsSection = document.querySelector('.projects-section');
       projectsSection.innerHTML = '';
       
-      // 添加新项目
       data.projects.forEach(project => {
-        const card = document.createElement('a');
-        card.href = project.link || '#';
-        card.className = 'project-card';
+        const projectCard = document.createElement('a');
+        projectCard.href = project.link;
+        projectCard.className = 'project-card';
+        projectCard.target = '_blank';
+        projectCard.rel = 'noopener noreferrer';
         
-        card.innerHTML = `
-          <div class="project-icon">
-            <i class="bi bi-${project.icon || 'github'}"></i>
-          </div>
-          <h2 class="project-title">${project.title || '未命名项目'}</h2>
-        `;
+        const projectIcon = document.createElement('div');
+        projectIcon.className = 'project-icon';
         
-        projectsSection.appendChild(card);
+        const icon = document.createElement('i');
+        icon.className = `bi bi-${project.icon}`;
+        projectIcon.appendChild(icon);
+        
+        const projectTitle = document.createElement('h2');
+        projectTitle.className = 'project-title';
+        projectTitle.textContent = project.title;
+        
+        projectCard.appendChild(projectIcon);
+        projectCard.appendChild(projectTitle);
+        
+        projectsSection.appendChild(projectCard);
       });
       
-      // 重新初始化项目卡片动画
+      // 初始化新添加的项目卡片的鼠标效果
       initProjectCards();
     }
-  }
-  
-  // 更新网站标题和描述
-  if (data.settings) {
-    // 更新标题
-    if (data.settings.siteTitle) {
-      document.title = data.settings.siteTitle;
-    }
     
-    // 更新描述
-    if (data.settings.siteDescription) {
+    // 更新网站设置
+    if (data.settings) {
+      if (data.settings.siteTitle) {
+        document.title = data.settings.siteTitle;
+      }
+      
       const metaDescription = document.querySelector('meta[name="description"]');
-      if (metaDescription) {
+      if (metaDescription && data.settings.siteDescription) {
         metaDescription.setAttribute('content', data.settings.siteDescription);
       }
     }
+  } catch (error) {
+    console.error('更新页面数据失败:', error);
   }
+}
+
+// 使用默认数据更新页面
+function updatePageWithDefaultData() {
+  const defaultData = {
+    profile: {
+      name: '猫咪主人',
+      bio: '🐱 喵喵喵！这是一个充满猫咪元素的个人主页，用来展示我的项目。欢迎来到我的猫咪世界！',
+      socialLinks: [
+        { platform: 'github', url: '#', icon: 'github' },
+        { platform: 'twitter', url: '#', icon: 'twitter-x' },
+        { platform: 'email', url: '#', icon: 'envelope' },
+        { platform: 'blog', url: '#', icon: 'journal-text' }
+      ]
+    },
+    projects: [
+      { id: '1', title: '项目一', icon: 'github', link: '#' },
+      { id: '2', title: '项目二', icon: 'globe', link: '#' },
+      { id: '3', title: '项目三', icon: 'code-slash', link: '#' }
+    ],
+    settings: {
+      siteTitle: '猫咪风格个人主页',
+      siteDescription: '一个超可爱的猫咪风格个人导航页面，带有精美的动画效果和响应式设计。'
+    }
+  };
+  
+  updatePageWithData(defaultData);
+}
+
+// 显示/隐藏加载器
+function showLoader(show) {
+  const loader = document.getElementById('loader') || createLoader();
+  loader.style.display = show ? 'flex' : 'none';
+}
+
+// 创建加载器元素
+function createLoader() {
+  const loaderExists = document.getElementById('loader');
+  if (loaderExists) return loaderExists;
+  
+  const loader = document.createElement('div');
+  loader.id = 'loader';
+  loader.className = 'loader';
+  loader.style.display = 'none';
+  loader.style.position = 'fixed';
+  loader.style.top = '0';
+  loader.style.left = '0';
+  loader.style.width = '100%';
+  loader.style.height = '100%';
+  loader.style.backgroundColor = 'rgba(255, 255, 255, 0.8)';
+  loader.style.zIndex = '9999';
+  loader.style.display = 'flex';
+  loader.style.alignItems = 'center';
+  loader.style.justifyContent = 'center';
+  
+  const spinnerContainer = document.createElement('div');
+  spinnerContainer.style.textAlign = 'center';
+  
+  const spinner = document.createElement('div');
+  spinner.className = 'spinner';
+  spinner.style.width = '40px';
+  spinner.style.height = '40px';
+  spinner.style.margin = '0 auto';
+  spinner.style.borderRadius = '50%';
+  spinner.style.border = '4px solid rgba(0, 0, 0, 0.1)';
+  spinner.style.borderTopColor = 'var(--accent-color)';
+  spinner.style.animation = 'spin 1s infinite linear';
+  
+  const style = document.createElement('style');
+  style.textContent = '@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }';
+  
+  const loadingText = document.createElement('p');
+  loadingText.textContent = '加载中...';
+  loadingText.style.marginTop = '10px';
+  loadingText.style.color = 'var(--text-color)';
+  
+  spinnerContainer.appendChild(spinner);
+  spinnerContainer.appendChild(loadingText);
+  loader.appendChild(spinnerContainer);
+  document.head.appendChild(style);
+  document.body.appendChild(loader);
+  
+  return loader;
 } 

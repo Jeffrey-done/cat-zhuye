@@ -9,7 +9,8 @@
 const ADMIN_USERNAME = 'admin';  // 将此更改为您的用户名
 const ADMIN_PASSWORD_HASH = '5f4dcc3b5aa765d61d8327deb882cf99';  // 'password'的MD5哈希，请更改为安全密码
 const JWT_SECRET = 'your-secret-key';  // 更改为随机字符串
-const CORS_ORIGINS = ['https://your-site.pages.dev', 'http://localhost:3000'];
+const CORS_ORIGINS = ['https://jeffrey-done.github.io', 'http://localhost:3000'];  // 允许的源
+const TEMP_TOKEN = 'temporary_token_for_frontend';  // 用于前端访问数据的临时令牌
 
 // KV 命名空间绑定
 // 部署时在Cloudflare Workers界面中设置
@@ -137,8 +138,14 @@ async function handleVerify(request, responseInit) {
 // 获取网站数据
 async function handleGetData(request, responseInit) {
   try {
-    // 验证Token
-    if (!await isAuthenticated(request)) {
+    const token = getTokenFromRequest(request);
+    
+    // 检查是否是临时令牌（用于前端访问）或有效的管理员令牌
+    const isTempToken = token === TEMP_TOKEN;
+    const isAdmin = token && token !== TEMP_TOKEN ? await isAuthenticated(request) : false;
+    
+    // 如果既不是临时令牌也不是管理员令牌，则拒绝访问
+    if (!isTempToken && !isAdmin) {
       return new Response(JSON.stringify({ success: false, message: '未授权' }), {
         status: 401,
         headers: {
@@ -156,12 +163,18 @@ async function handleGetData(request, responseInit) {
       data = getDefaultData();
     }
     
+    // 设置缓存控制头以确保前端始终获取最新数据
+    const headers = {
+      ...responseInit.headers,
+      'Content-Type': 'application/json',
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    };
+    
     return new Response(JSON.stringify(data), {
       status: 200,
-      headers: {
-        ...responseInit.headers,
-        'Content-Type': 'application/json'
-      }
+      headers: headers
     });
   } catch (error) {
     return new Response(JSON.stringify({ success: false, message: '获取数据失败', error: error.message }), {
@@ -177,7 +190,7 @@ async function handleGetData(request, responseInit) {
 // 保存网站数据
 async function handleSaveData(request, responseInit) {
   try {
-    // 验证Token
+    // 验证Token - 只有管理员才能保存数据
     if (!await isAuthenticated(request)) {
       return new Response(JSON.stringify({ success: false, message: '未授权' }), {
         status: 401,
@@ -193,9 +206,6 @@ async function handleSaveData(request, responseInit) {
     
     // 保存到KV
     await CATPAGE.put('siteData', JSON.stringify(data));
-    
-    // 更新网站HTML（可选，这里根据您的部署方式可能有不同实现）
-    await updateHtml(data);
     
     return new Response(JSON.stringify({ success: true, message: '数据保存成功' }), {
       status: 200,
@@ -215,75 +225,10 @@ async function handleSaveData(request, responseInit) {
   }
 }
 
-// 更新网站HTML
-async function updateHtml(data) {
-  // 从KV获取HTML模板
-  let htmlTemplate = await CATPAGE.get('htmlTemplate');
-  
-  // 如果没有模板，则获取默认模板
-  if (!htmlTemplate) {
-    // 这里可以放置基础模板，或者通过fetch获取网站当前页面内容
-    // 为简单起见，此处未实现
-    return;
-  }
-  
-  // 更新HTML内容（使用简单的替换，实际可能需要更复杂的HTML处理）
-  
-  // 个人信息
-  if (data.profile) {
-    htmlTemplate = htmlTemplate
-      .replace(/<h1 class="profile-name">(.*?)<\/h1>/g, `<h1 class="profile-name">${data.profile.name}</h1>`)
-      .replace(/<p class="profile-bio">(.*?)<\/p>/g, `<p class="profile-bio">${data.profile.bio}</p>`);
-    
-    // 社交链接
-    let socialLinksHtml = '';
-    if (data.profile.socialLinks) {
-      data.profile.socialLinks.forEach(link => {
-        socialLinksHtml += `<a href="${link.url}" class="social-link" title="${link.platform}"><i class="bi bi-${link.icon}"></i></a>`;
-      });
-      
-      htmlTemplate = htmlTemplate.replace(
-        /<div class="social-links">([\s\S]*?)<\/div>/g, 
-        `<div class="social-links">${socialLinksHtml}</div>`
-      );
-    }
-  }
-  
-  // 项目
-  if (data.projects) {
-    let projectsHtml = '';
-    data.projects.forEach(project => {
-      projectsHtml += `
-        <a href="${project.link}" class="project-card">
-          <div class="project-icon">
-            <i class="bi bi-${project.icon}"></i>
-          </div>
-          <h2 class="project-title">${project.title}</h2>
-        </a>
-      `;
-    });
-    
-    htmlTemplate = htmlTemplate.replace(
-      /<section class="projects-section">([\s\S]*?)<\/section>/g,
-      `<section class="projects-section">${projectsHtml}</section>`
-    );
-  }
-  
-  // 网站设置
-  if (data.settings) {
-    htmlTemplate = htmlTemplate
-      .replace(/<title>(.*?)<\/title>/g, `<title>${data.settings.siteTitle}</title>`)
-      .replace(/<meta name="description" content="(.*?)">/g, `<meta name="description" content="${data.settings.siteDescription}">`);
-  }
-  
-  // 保存更新后的HTML
-  await CATPAGE.put('index.html', htmlTemplate);
-}
-
 // 验证身份
 async function isAuthenticated(request) {
   const token = getTokenFromRequest(request);
-  if (!token) return false;
+  if (!token || token === TEMP_TOKEN) return false;
   
   try {
     verifyJWT(token);
@@ -392,14 +337,21 @@ function handleCORS(request) {
 // 获取CORS响应头
 function getCORSHeaders(request) {
   const origin = request.headers.get('Origin');
+  
+  // 基础 CORS 头
   const corsHeaders = {
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Max-Age': '86400' // 24小时缓存预检响应
   };
   
   // 检查请求来源是否在允许的列表中
-  if (CORS_ORIGINS.includes(origin)) {
+  if (CORS_ORIGINS.includes(origin) || origin.endsWith('.github.io')) {
     corsHeaders['Access-Control-Allow-Origin'] = origin;
+  } else {
+    // 如果源不在允许列表中，默认使用第一个允许的源
+    // 这样可以防止CORS问题，但应该根据实际情况调整
+    corsHeaders['Access-Control-Allow-Origin'] = CORS_ORIGINS[0];
   }
   
   return corsHeaders;
