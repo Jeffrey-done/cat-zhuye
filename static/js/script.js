@@ -3,6 +3,9 @@
  * 作者: AI助手
  */
 
+// Worker API地址
+const API_URL = 'https://cat-zhuye.jeffreyy.workers.dev';
+
 // 等待DOM内容加载完成
 document.addEventListener('DOMContentLoaded', function() {
   // 初始化主题
@@ -22,6 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // 初始化项目卡片动画
   initProjectCards();
+  
+  // 从后台加载网站数据
+  loadDataFromBackend();
 });
 
 // 初始化主题设置
@@ -279,4 +285,146 @@ function loadRandomAvatar() {
     profileImg.src = 'static/img/cat-logo.svg';
     profileImg.style.opacity = '1';
   };
+}
+
+// 从Worker API加载数据
+function loadDataFromBackend() {
+  // 检查是否存在缓存数据以及缓存是否过期
+  const cachedData = localStorage.getItem('siteData');
+  const cacheTimestamp = localStorage.getItem('siteDataTimestamp');
+  const now = Date.now();
+  const cacheExpiration = 5 * 60 * 1000; // 5分钟缓存过期时间
+  
+  // 如果有缓存且未过期，使用缓存数据
+  if (cachedData && cacheTimestamp && (now - parseInt(cacheTimestamp)) < cacheExpiration) {
+    try {
+      const data = JSON.parse(cachedData);
+      updatePageContent(data);
+      console.log('使用缓存数据');
+      return;
+    } catch (e) {
+      console.error('解析缓存数据错误:', e);
+    }
+  }
+  
+  // 尝试从API获取数据
+  fetch(`${API_URL}/data`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      // 尝试使用管理员的临时令牌获取数据
+      'Authorization': `Bearer ${localStorage.getItem('auth_token') || 'temporary_token_for_frontend'}` 
+    }
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`API响应错误: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      // 更新页面内容
+      updatePageContent(data);
+      
+      // 缓存数据
+      localStorage.setItem('siteData', JSON.stringify(data));
+      localStorage.setItem('siteDataTimestamp', Date.now().toString());
+      
+      console.log('从API加载数据成功');
+    })
+    .catch(error => {
+      console.error('从API加载数据失败:', error);
+      
+      // 如果有缓存数据（即使已过期），在API失败时仍使用它
+      if (cachedData) {
+        try {
+          const data = JSON.parse(cachedData);
+          updatePageContent(data);
+          console.log('API请求失败，使用过期缓存数据');
+        } catch (e) {
+          console.error('解析缓存数据错误:', e);
+        }
+      }
+    });
+}
+
+// 更新页面内容
+function updatePageContent(data) {
+  // 更新个人信息
+  if (data.profile) {
+    // 更新名称
+    const nameEl = document.querySelector('.profile-name');
+    if (nameEl && data.profile.name) {
+      nameEl.textContent = data.profile.name;
+    }
+    
+    // 更新简介
+    const bioEl = document.querySelector('.profile-bio');
+    if (bioEl && data.profile.bio) {
+      bioEl.textContent = data.profile.bio;
+    }
+    
+    // 更新社交链接
+    if (data.profile.socialLinks && data.profile.socialLinks.length > 0) {
+      const socialLinksContainer = document.querySelector('.social-links');
+      if (socialLinksContainer) {
+        // 清空现有链接
+        socialLinksContainer.innerHTML = '';
+        
+        // 添加新链接
+        data.profile.socialLinks.forEach(link => {
+          const linkEl = document.createElement('a');
+          linkEl.href = link.url || '#';
+          linkEl.className = 'social-link';
+          linkEl.title = link.platform || '';
+          linkEl.innerHTML = `<i class="bi bi-${link.icon || 'link'}"></i>`;
+          socialLinksContainer.appendChild(linkEl);
+        });
+      }
+    }
+  }
+  
+  // 更新项目卡片
+  if (data.projects && data.projects.length > 0) {
+    const projectsSection = document.querySelector('.projects-section');
+    if (projectsSection) {
+      // 清空现有项目
+      projectsSection.innerHTML = '';
+      
+      // 添加新项目
+      data.projects.forEach(project => {
+        const card = document.createElement('a');
+        card.href = project.link || '#';
+        card.className = 'project-card';
+        
+        card.innerHTML = `
+          <div class="project-icon">
+            <i class="bi bi-${project.icon || 'github'}"></i>
+          </div>
+          <h2 class="project-title">${project.title || '未命名项目'}</h2>
+        `;
+        
+        projectsSection.appendChild(card);
+      });
+      
+      // 重新初始化项目卡片动画
+      initProjectCards();
+    }
+  }
+  
+  // 更新网站标题和描述
+  if (data.settings) {
+    // 更新标题
+    if (data.settings.siteTitle) {
+      document.title = data.settings.siteTitle;
+    }
+    
+    // 更新描述
+    if (data.settings.siteDescription) {
+      const metaDescription = document.querySelector('meta[name="description"]');
+      if (metaDescription) {
+        metaDescription.setAttribute('content', data.settings.siteDescription);
+      }
+    }
+  }
 } 
