@@ -306,6 +306,12 @@ async function loadData() {
 
     const data = await response.json();
     updatePageWithData(data);
+    
+    // 应用网站主题
+    if (data.settings && data.settings.theme && data.settings.theme !== 'default') {
+      applyTheme(data.settings.theme);
+    }
+    
     showLoader(false);
   } catch (error) {
     console.error('加载数据失败:', error);
@@ -475,4 +481,28 @@ function createLoader() {
   document.body.appendChild(loader);
   
   return loader;
+}
+
+// 应用主题
+function applyTheme(themeId) {
+  if (!themeId || themeId === 'default') return;
+  
+  try {
+    // 移除已有的主题（如果存在）
+    const existingTheme = document.getElementById('site-theme-link');
+    if (existingTheme) existingTheme.remove();
+    
+    // 创建新的主题样式链接
+    const themeLink = document.createElement('link');
+    themeLink.id = 'site-theme-link';
+    themeLink.rel = 'stylesheet';
+    themeLink.href = `themes/${themeId}-theme.css`;
+    
+    // 添加到文档头部
+    document.head.appendChild(themeLink);
+    
+    console.log(`主题已应用: ${themeId}`);
+  } catch (error) {
+    console.error('应用主题失败:', error);
+  }
 } 

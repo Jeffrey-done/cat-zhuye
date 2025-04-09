@@ -571,10 +571,106 @@
                   <i class="bi bi-info-circle me-1"></i>网站描述将用于SEO和分享页面时的预览
                 </div>
               </div>
+              <!-- 隐藏字段保存主题值 -->
+              <input type="hidden" id="site-theme" value="default">
               <button type="submit" class="btn btn-primary">
                 <i class="bi bi-check2-circle me-1"></i> 保存设置
               </button>
             </form>
+          </div>
+        </div>
+        
+        <!-- 主题选择卡片 -->
+        <div class="card mt-4">
+          <div class="card-body">
+            <h4 class="card-title mb-3">
+              <i class="bi bi-palette me-2 text-primary"></i>主题设置
+            </h4>
+            <p>选择一个主题来改变网站的外观风格：</p>
+            
+            <!-- 主题选择区域 -->
+            <div id="theme-select-container" class="row g-3 mt-2">
+              <!-- 主题选项将动态加载在这里 -->
+            </div>
+            
+            <style>
+              .theme-card {
+                cursor: pointer;
+                border: 2px solid #e9e9e9;
+                border-radius: 16px;
+                padding: 15px;
+                transition: all 0.3s ease;
+                margin-bottom: 15px;
+                display: flex;
+                align-items: center;
+                background-color: white;
+              }
+              
+              .theme-card:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+              }
+              
+              .theme-card.active {
+                border-color: var(--primary-color);
+                background-color: rgba(255, 158, 125, 0.05);
+              }
+              
+              .theme-preview {
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                margin-right: 15px;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+              }
+              
+              .theme-info {
+                flex-grow: 1;
+              }
+              
+              .theme-info h5 {
+                margin-bottom: 4px;
+                font-size: 1rem;
+                font-weight: 600;
+              }
+              
+              .theme-info small {
+                color: #888;
+                font-size: 0.8rem;
+              }
+              
+              .theme-preview-area {
+                margin-top: 20px;
+                padding: 15px;
+                border-radius: 12px;
+                border: 1px dashed #ccc;
+                background-color: rgba(255, 255, 255, 0.5);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+              }
+              
+              .theme-preview-area p {
+                margin-bottom: 0;
+              }
+              
+              .theme-save-btn {
+                margin-top: 20px;
+              }
+            </style>
+            
+            <!-- 主题预览区域 -->
+            <div class="theme-preview-area">
+              <h6 class="text-center">主题预览</h6>
+              <p id="theme-preview-text" class="text-center">当前选择：默认主题</p>
+            </div>
+            
+            <!-- 应用主题按钮 -->
+            <div class="text-center theme-save-btn">
+              <button type="button" class="btn btn-primary" onclick="document.getElementById('settings-form').dispatchEvent(new Event('submit'))">
+                <i class="bi bi-check2-circle me-1"></i> 应用并保存主题
+              </button>
+            </div>
           </div>
         </div>
         
